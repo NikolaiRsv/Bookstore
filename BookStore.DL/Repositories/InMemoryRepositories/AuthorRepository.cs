@@ -20,5 +20,6 @@ namespace BookStore.DL.Repositories.InMemoryRepositories
         {
             InMemoryDb.InMemoryDb.Authors.Add(author);
         }
+
     }
 }
