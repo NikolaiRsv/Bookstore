@@ -1,2 +1,2 @@
-# Bookstore
-C# Project
+# BookStore
+Boris Serafimov PU project
