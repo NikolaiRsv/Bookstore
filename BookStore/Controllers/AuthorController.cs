@@ -19,10 +19,24 @@ namespace BookStore.Controllers
             _authorService = authorService;
         }
 
-        [HttpGet(Name = "GetAllAuthors")]
-        public IEnumerable<Author> GetAll()
+
+
+        [HttpGet("GetAllAuthors")]
+        public IEnumberable<Author> GetAll()
         {
-           return _authorService.GetAll();
+            return _authorRepository.GetAll();
+        }
+
+        [HttpGet("GetById")]
+        public Author GetById(int d)
+        {
+            return _authorRepository.GetById(id);
+        }
+
+        [HttpPost("Add")]
+        public void Add(FromBody, Author author)
+        {
+            _authorService.Add(author);
         }
     }
 }

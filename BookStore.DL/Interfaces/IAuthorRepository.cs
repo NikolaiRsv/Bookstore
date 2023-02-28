@@ -9,5 +9,6 @@ namespace BookStore.DL.Interfaces
         Author GetById(int id);
 
         void Add(Author author);
+
     }
 }
