@@ -3,7 +3,7 @@ using BookStore.Models.Models;
 
 namespace BookStore.DL.Repositories.InMemoryRepositories
 {
-    public class BookInMemoryRepository : IBookRepository
+    public class BookRepository : IBookRepository
     {
         public IEnumerable<Book> GetAll()
         {
@@ -43,6 +43,11 @@ namespace BookStore.DL.Repositories.InMemoryRepositories
             {
                 forUpdate.Title = author.Title;
             }
+        }
+
+        public IEnumerable<Book> GetAllByAuthorId(int authorId)
+        {
+            return InMemoryDb.Data.Books.Where(book => book.AuthorId == authorId);
         }
     }
 }
