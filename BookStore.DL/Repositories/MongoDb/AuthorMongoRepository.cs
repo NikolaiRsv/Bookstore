@@ -1,9 +1,10 @@
 ﻿using BookStore.DL.Interfaces;
-using BookStore.Models.Configuration;
 using BookStore.Models.Configurations;
 using BookStore.Models.Models;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
+using System;
 
 namespace BookStore.DL.Repositories.MongoDb
 {
@@ -18,41 +19,45 @@ namespace BookStore.DL.Repositories.MongoDb
                 mongoConfig.CurrentValue.ConnectionString);
             var database =
                 client.GetDatabase(mongoConfig.CurrentValue.DatabaseName);
-
+            var collectionSettings = new MongoCollectionSettings
+            {
+                GuidRepresentation = GuidRepresentation.Standard
+            };
             _authors = database
-                .GetCollection<Author>(nameof(Author));
+                .GetCollection<Author>(nameof(Author), collectionSettings);
         }
 
         public async Task<IEnumerable<Author>> GetAll()
         {
-            return await
+            return await 
                 _authors.Find(author => true).ToListAsync();
         }
 
-        public async Task<Author> GetById(int id)
+        public async Task<Author> GetById(Guid id)
         {
-            return await _authors
-                .Find(x => x.Id == id)
+            var item = await _authors
+                .Find(Builders<Author>.Filter.Eq("_id", id))
                 .FirstOrDefaultAsync();
+            return item;
         }
 
         public async Task Add(Author author)
         {
-            await _authors.InsertOneAsync(author);
+           await _authors.InsertOneAsync(author);
         }
 
-        public Task Delete(int id)
+        public Task Delete(Guid id)
         {
             return _authors.DeleteOneAsync(x => x.Id == id);
         }
 
         public Task Update(Author author)
         {
-            var filter =
+            var filter = 
                 Builders<Author>.Filter.Eq(s => s.Id, author.Id);
             var update = Builders<Author>
                 .Update.Set(s =>
-                    s.Bio, author.Bio);
+                    s.Bio, author.Bio );
             return _authors.UpdateOneAsync(filter, update);
         }
     }

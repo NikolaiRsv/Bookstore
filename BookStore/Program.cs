@@ -3,7 +3,12 @@ using BookStore.BL.Services;
 using BookStore.DL.Interfaces;
 using BookStore.DL.Repositories.InMemoryRepositories;
 using BookStore.DL.Repositories.MongoDb;
+using BookStore.Extensions;
+using BookStore.HealthChecks;
 using BookStore.Models.Configurations;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 
@@ -24,7 +29,7 @@ builder.Services.Configure<MongoDbConfiguration>(
 builder.Services.AddSingleton<IAuthorService, AuthorService>();
 builder.Services.AddSingleton<IAuthorRepository, AuthorMongoRepository>();
 builder.Services.AddSingleton<IBookService, BookService>();
-builder.Services.AddSingleton<IBookRepository, BookInMemoryRepository>();
+builder.Services.AddSingleton<IBookRepository, BookMongoRepository>();
 builder.Services.AddSingleton<ILibraryService, LibraryService>();
 
 builder.Services.AddAutoMapper(typeof(Program));
@@ -34,6 +39,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHealthChecks()
+    .AddCheck<MongoHealthCheck>("MongoDB");
+
+BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -42,6 +52,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.RegisterHealthChecks();
 
 app.UseHttpsRedirection();
 

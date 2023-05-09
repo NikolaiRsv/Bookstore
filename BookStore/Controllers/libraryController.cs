@@ -1,29 +1,24 @@
 ﻿using BookStore.BL.Interfaces;
-using BookStore.Models.Response;
+using BookStore.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
 
 namespace BookStore.Controllers
 {
-
     [ApiController]
     [Route("[controller]")]
     public class LibraryController : ControllerBase
     {
         private readonly ILibraryService _libraryService;
-
         public LibraryController(ILibraryService libraryService)
         {
             _libraryService = libraryService;
         }
 
-        [HttpGet("getAllBooksByAuthor")]  
-        public GetAllBooksByAuthorResponse
-          GetAllBooksByAuthor(int authorId)
+        [HttpGet("GetAllBooksByAuthor")]
+        public async Task<GetAllBooksByAuthorResponse>
+            GetAllBooksByAuthor(Guid authorId)
         {
-            return _libraryService.GetAllBooksByAuthorId(authorId);
-
+            return await _libraryService.GetAllBooksByAuthorId(authorId);
         }
     }
 }
